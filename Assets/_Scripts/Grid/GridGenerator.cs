@@ -15,6 +15,9 @@ namespace Grid
         [SerializeField] float _backgroundMargin = 0.01f;
 
         private List<List<GridSlot>> _gridSlotMatrix = new();
+        private Vector2 _gridCenter;
+
+        public Vector2 GridCenter => _gridCenter;
 
         protected override void Awake()
         {
@@ -25,7 +28,7 @@ namespace Grid
         {
             CreateGrid();
         }
-        
+
         private void CreateGrid()
         {
             Vector3 slotSize = _gridSlotPrefab.transform.localScale;
@@ -36,6 +39,7 @@ namespace Grid
 
             // Offset to center grid at origin
             Vector2 gridOffset = new Vector2(-totalWidth / 2f + slotSize.x / 2f, -totalHeight / 2f + slotSize.y / 2f);
+            _gridCenter = gridOffset;
 
             // Nested Loop for create a 2D grid
             for (int i = 0; i < _gridUnitDimension.x; i++)
@@ -52,6 +56,7 @@ namespace Grid
                     // GridSlots location in the grid
                     float xPos = gridOffset.x + i * (slotSize.x + _gridPadding);
                     float yPos = gridOffset.y + j * (slotSize.y + _gridPadding);
+                    slot.SlotIndex = new Vector2Int(i, j);
                     slot.transform.position = new Vector3(xPos, yPos);
                 }
                 // Adding the row in the matrix
@@ -61,20 +66,30 @@ namespace Grid
             CreateBG(totalWidth, totalHeight);
             EventMessenger.Default.Publish(new GridGenerationCompletedEvent(_gridSlotMatrix));
         }
-        
+
         //Create Background for the grid
         private void CreateBG(float width, float height)
         {
             if (_backgroundPrefab != null)
             {
                 GameObject bg = Instantiate(_backgroundPrefab, transform);
-                bg.transform.position = Vector3.zero; 
+                bg.transform.position = Vector3.zero;
 
                 float widthWithMargin = width + _backgroundMargin * 2f;
                 float heightWithMargin = height + _backgroundMargin * 2f;
 
                 bg.transform.localScale = new Vector3(widthWithMargin, heightWithMargin, 1f);
             }
+        }
+        
+        public Vector3 GetWorldPosition(Vector2Int gridPos)
+        {
+            if (gridPos.x < 0 || gridPos.x >= _gridSlotMatrix.Count ||
+                gridPos.y < 0 || gridPos.y >= _gridSlotMatrix[0].Count)
+                return Vector3.zero;
+
+            // Return the world position of the grid slot (center of the cell)
+            return _gridSlotMatrix[gridPos.x][gridPos.y].transform.position;
         }
     }
 

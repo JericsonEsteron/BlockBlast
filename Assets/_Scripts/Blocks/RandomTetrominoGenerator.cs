@@ -5,13 +5,15 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
+using Grid;
 
 namespace Block
 {
     public class RandomTetrominoGenerator : MonoBehaviour
     {
-        [Header("Refereces")]
-        [SerializeField] private TetrominoController[] _tetrominos;
+        [Header("References")]
+        [SerializeField] private TetrominoShapePresetConfig _tetrominoShapePresetConfig;
+        [SerializeField] private TetrominoController _tetrominoBase;
 
         [Header("Parameters")]
         [SerializeField] private Vector2 _intialSpawnPointOffset = new Vector2(0, -2.5f);
@@ -20,9 +22,12 @@ namespace Block
         [SerializeField] private Vector2 _spawnSize = new Vector2(.5f, .5f);
 
         private int _currentActiveSet;
+        private List<List<GridSlot>> _gridSlotMatrix = new();
+        private int _recruveIndex;
 
         private void OnEnable()
         {
+            _recruveIndex = -1;
             EventSubscription();
         }
 
@@ -41,6 +46,7 @@ namespace Block
 
         private void OnGridCompleted(GridGenerationCompletedEvent @event)
         {
+            _gridSlotMatrix = @event.gridSlotMatrix;
             SpawnTetrominoSet();
         }
 
@@ -49,8 +55,9 @@ namespace Block
             _currentActiveSet = _maxNumPerSet;
             int spawnDirection = 1;
             Vector2 spawnOffset = Vector2.zero;
-            
-            List<int> randomUniqueIndeces = GetUniqueRandomIndices(_maxNumPerSet, _tetrominos.Length);
+            List<TetrominoController> activeTetronimos = new();
+
+            List<int> randomUniqueIndeces = GetUniqueRandomIndices(_maxNumPerSet, _tetrominoShapePresetConfig.TetrominoShapes.Length);
 
             for (int i = 0; i < _maxNumPerSet; i++)
             {
@@ -63,19 +70,51 @@ namespace Block
                     spawnOffset += _spawnDistanceBetween;
 
                 var spawnPosition = _intialSpawnPointOffset + spawnOffset;
-                GenerateTetromino(spawnPosition, randomUniqueIndeces[i]);
+                activeTetronimos.Add(GenerateTetromino(spawnPosition, randomUniqueIndeces[i], i));
             }
+            EventMessenger.Default.Publish(new TetrominoSetGeneratedEvent(activeTetronimos));
         }
 
-        private void GenerateTetromino(Vector2 spawnPosition, int index)
+        private TetrominoController GenerateTetromino(Vector2 spawnPosition, int index, int setIndex)
         {
-            var instance = Instantiate(_tetrominos[index]);
-            instance.transform.localEulerAngles = new Vector3(0, 0, GetRandomAngle());
+            TetrominoController instance = Instantiate(_tetrominoBase);
+
+            instance.BuildTetromino(index, instance.gameObject, spawnPosition);
+            instance.gameObject.name = _tetrominoShapePresetConfig.TetrominoShapes[index].shapeName;
+
+            var newAngle = GetRandomAngle();
+            instance.transform.localEulerAngles = new Vector3(0, 0, newAngle);
+
+            var newShape = AdjustShapeToRotation.GetRotatedShape(_tetrominoShapePresetConfig.TetrominoShapes[index].shape, newAngle);
+            instance.TetrominoShape.shape = newShape;
+
+
             instance.transform.DOScale(_spawnSize, .3f);
             instance.transform.position = spawnPosition;
 
             instance.SpawnLocation = spawnPosition;
             instance.SpawnSize = _spawnSize;
+            instance.GridSlotMatrix = _gridSlotMatrix;
+
+            // if (setIndex == 0)
+            // {
+            //     Debug.Log("SET INDEX IS 0");
+            //     if (_recruveIndex >= _tetrominoShapePresetConfig.TetrominoShapes.Length)
+            //     {
+            //         EventMessenger.Default.Publish(new GameOverEvent());
+            //         return null;
+            //     }
+                
+            //     if (!TetrominoCanFitController.Instance.AnyTetrominoFits(instance))
+            //     {
+            //         Debug.Log($"Recurve time {_recruveIndex}");
+            //         _recruveIndex++;
+            //         Destroy(instance);
+            //         instance = GenerateTetromino(spawnPosition, _recruveIndex, 0);
+            //     }
+            // }
+
+            return instance;
         }
 
         private float GetRandomAngle()
