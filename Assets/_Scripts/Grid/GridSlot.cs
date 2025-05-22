@@ -9,9 +9,11 @@ namespace Grid
         [SerializeField] BoxCollider2D _collider;
         
         private bool _isOccupied;
+        private Vector2Int _slotIndex;
         
         public bool IsOccupied => _isOccupied;
         public BlockController Block { get; set; }
+        public Vector2Int SlotIndex { get => _slotIndex; set => _slotIndex = value; }
 
         private void OnEnable()
         {

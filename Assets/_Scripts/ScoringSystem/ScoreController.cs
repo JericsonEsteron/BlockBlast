@@ -30,6 +30,8 @@ namespace ScoringSystem
 
         private void OnLineCleared(LineClearedEvent @event)
         {
+            if (@event.numOfLinesCleared == 0) return;
+            
             var score = @event.numOfLinesCleared * _scoreConfig.PointsPerLinesCleared;
             var multiplier = 1f;
             foreach (var scoreStats in _scoreConfig.ScoreStats)

@@ -12,9 +12,13 @@ namespace Block
         [Header("References")]
         [SerializeField] Transform _shadowBlock;
         [SerializeField] BlockPlacementValidator _blockPlacementValidator;
+        [SerializeField] SpriteRenderer _blockSpriteRenderer;
 
         private GridSlot _gridSlot;
         private bool isInPlace;
+
+        public BlockPlacementValidator BlockPlacementValidator => _blockPlacementValidator;
+        public SpriteRenderer BlockSpriteRenderer => _blockSpriteRenderer; 
 
         private void OnEnable()
         {

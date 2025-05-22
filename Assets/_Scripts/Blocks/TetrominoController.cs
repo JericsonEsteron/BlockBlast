@@ -1,9 +1,10 @@
-using System;
+
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using Block;
 using DG.Tweening;
 using EventMessage;
+using Grid;
 using UnityEngine;
 
 namespace Block
@@ -11,25 +12,32 @@ namespace Block
     public class TetrominoController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private BlockPlacementValidator[] _blockValidators;
-        [SerializeField] private BlockController[] _blockControllers;
+        [SerializeField] private TetrominoShapePresetConfig _tetrominoShapePresetConfig;
+        [SerializeField] private TetrominoBuilder _builder;
+        [SerializeField] private List<BlockPlacementValidator> _blockValidators = new();
+        [SerializeField] private List<BlockController> _blockControllers = new();
         [SerializeField] private DragBlock _dragBlock;
+        [SerializeField] private BlockSpriteList _blockSpriteList;
 
         private Vector3 _spawnPosition;
         private Vector3 _spawnSize;
         private bool _isValid;
         private bool _canCheck;
         private Coroutine _CheckPlacementValidation;
+        private TetrominoShape _tetrominoShape;
+        private List<List<GridSlot>> _gridSlotMatrix = new();
 
         public Vector3 SpawnLocation { get => _spawnPosition; set => _spawnPosition = value; }
         public Vector3 SpawnSize { get => _spawnSize; set => _spawnSize = value; }
-        public int NumOfBlocks => _blockControllers.Length;
+        public int NumOfBlocks => _blockControllers.Count;
+        public TetrominoShape TetrominoShape => _tetrominoShape;
+
+        public List<List<GridSlot>> GridSlotMatrix { get => _gridSlotMatrix; set => _gridSlotMatrix = value; }
 
         private void OnEnable()
         {
             _dragBlock.OnDragEnded += OnDragEnded;
             _dragBlock.OnDragStarted += OnDragStarted;
-            _CheckPlacementValidation = StartCoroutine(CheckPlacementValidation());
             _canCheck = false;
         }
 
@@ -60,7 +68,7 @@ namespace Block
             if (_isValid)
             {
                 StopCoroutine(_CheckPlacementValidation);
-                for (int i = 0; i < _blockControllers.Length; i++)
+                for (int i = 0; i < _blockControllers.Count; i++)
                 {
                     _blockValidators[i].OnPlaceBlock();
                     _blockControllers[i].OnPlaceBlock();
@@ -81,28 +89,92 @@ namespace Block
             seq.Join(transform.DOScale(_spawnSize, .2f));
         }
 
+        // private IEnumerator CheckPlacementValidation()
+        // {
+        //     while (true)
+        //     {
+        //         foreach (var blockValidator in _blockValidators)
+        //         {
+        //             if (!blockValidator.IsValidToPlaceBlock)
+        //             {
+        //                 _isValid = false;
+        //                 break;
+        //             }
+        //             _isValid = true;
+        //         }
+
+        //         foreach (var blockValidator in _blockValidators)
+        //         {
+        //             blockValidator.SetShadowVisibility(_isValid);
+        //         }
+
+        //         _canCheck = true;
+        //         yield return new WaitForSeconds(.1f);
+        //         _canCheck = false;
+        //     }
+        // }
+        
         private IEnumerator CheckPlacementValidation()
         {
             while (true)
             {
-                foreach (var blockValidator in _blockValidators)
+                _isValid = true;
+
+                List<Vector2Int> snappedGridCoords = new();
+
+                foreach (var validator in _blockValidators)
                 {
-                    if (!blockValidator.IsValidToPlaceBlock)
+                    if (!validator.IsValidToPlaceBlock || validator.CurrentSlot == null)
                     {
                         _isValid = false;
                         break;
                     }
-                    _isValid = true;
+
+                    Vector2Int gridPos = validator.CurrentSlot.GetComponent<GridSlot>().SlotIndex;
+                    snappedGridCoords.Add(gridPos);
                 }
 
-                foreach (var blockValidator in _blockValidators)
+                // Only compare shapes if valid
+                if (_isValid && snappedGridCoords.Count == _tetrominoShape.shape.Length)
                 {
-                    blockValidator.SetShadowVisibility(_isValid);
+                    Vector2Int basePos = snappedGridCoords[0];
+                    for (int i = 0; i < snappedGridCoords.Count; i++)
+                        snappedGridCoords[i] -= basePos;
+
+                    for (int i = 0; i < _tetrominoShape.shape.Length; i++)
+                    {
+                        if (snappedGridCoords[i] != _tetrominoShape.shape[i])
+                        {
+                            _isValid = false;
+                            break;
+                        }
+                    }
                 }
+
+                foreach (var validator in _blockValidators)
+                    validator.SetShadowVisibility(_isValid);
 
                 _canCheck = true;
-                yield return new WaitForSeconds(.1f);
+                yield return new WaitForSeconds(0.1f);
                 _canCheck = false;
+            }
+        }
+
+        public void BuildTetromino(int index, GameObject rootGameObject, Vector3 position)
+        {
+            _tetrominoShape = new();
+            _tetrominoShape.shape = _tetrominoShapePresetConfig.TetrominoShapes[index].shape;
+            _tetrominoShape.shapeName = _tetrominoShapePresetConfig.TetrominoShapes[index].shapeName;
+
+            _CheckPlacementValidation = StartCoroutine(CheckPlacementValidation());
+
+            var blockControllerList = _builder.BuildTetromino(_tetrominoShape.shape, rootGameObject, position);
+            var spriteIndex = Random.Range(0, _blockSpriteList.BlockSprites.Length);
+            foreach (var blockController in blockControllerList)
+            {
+                blockController.BlockSpriteRenderer.sprite = _blockSpriteList.BlockSprites[spriteIndex];
+                _blockControllers.Add(blockController);
+                _blockValidators.Add(blockController.BlockPlacementValidator);
             }
         }
     }

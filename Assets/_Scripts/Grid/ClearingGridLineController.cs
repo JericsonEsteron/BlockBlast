@@ -38,9 +38,8 @@ namespace Grid
             FindFullRowsAndColumns(out fullRows, out fullCols);
             ClearLines(fullRows, fullCols);
 
-            var numfOfLines = fullRows.Count + fullCols.Count;    
-            if (numfOfLines > 0)
-                EventMessenger.Default.Publish(new LineClearedEvent(fullRows.Count + fullCols.Count));
+            var numOfLines = fullRows.Count + fullCols.Count;
+            EventMessenger.Default.Publish(new LineClearedEvent(numOfLines));
         }
 
         void FindFullRowsAndColumns(out List<int> fullRows, out List<int> fullCols)
@@ -93,7 +92,6 @@ namespace Grid
                 {
                     _gridSlotMatrix[row][col].RemoveBlock();
                 }
-                Debug.Log($"Cleared row: {row}");
             }
 
             foreach (int col in fullCols)
@@ -102,7 +100,6 @@ namespace Grid
                 {
                     _gridSlotMatrix[row][col].RemoveBlock();
                 }
-                Debug.Log($"Cleared column: {col}");
             }
         }
 
