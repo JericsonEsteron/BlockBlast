@@ -27,7 +27,7 @@ namespace MVC
             OnModelBound(_model);
         }
 
-        protected virtual void OnDisable() 
+        protected virtual void OnDestroy() 
         {
             OnModelUnBound(_model);
         }
@@ -57,7 +57,7 @@ namespace MVC
             Bind();
         }
 
-        protected void OnDisable() 
+        protected void OnDestroy() 
         {
             UnBind();
         }
