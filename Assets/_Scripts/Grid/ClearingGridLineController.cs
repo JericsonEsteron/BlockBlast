@@ -29,19 +29,29 @@ namespace Grid
         {
             _gridSlotMatrix = @event.gridSlotMatrix;
         }
-        
+
         private void CheckLines()
         {
-            CheckAndClearFullRows();
-            CheckAndClearFullColumns();
+            List<int> fullRows;
+            List<int> fullCols;
+
+            FindFullRowsAndColumns(out fullRows, out fullCols);
+            ClearLines(fullRows, fullCols);
+
+            var numfOfLines = fullRows.Count + fullCols.Count;    
+            if (numfOfLines > 0)
+                EventMessenger.Default.Publish(new LineClearedEvent(fullRows.Count + fullCols.Count));
         }
 
-        void CheckAndClearFullRows()
+        void FindFullRowsAndColumns(out List<int> fullRows, out List<int> fullCols)
         {
+            fullRows = new();
+            fullCols = new();
+
+            // Check full rows
             for (int row = 0; row < _gridSlotMatrix.Count; row++)
             {
                 bool isFull = true;
-
                 for (int col = 0; col < _gridSlotMatrix[row].Count; col++)
                 {
                     if (!_gridSlotMatrix[row][col].IsOccupied)
@@ -52,26 +62,15 @@ namespace Grid
                 }
 
                 if (isFull)
-                {
-                    for (int col = 0; col < _gridSlotMatrix[row].Count; col++)
-                    {
-                        _gridSlotMatrix[row][col].RemoveBlock();
-                    }
-
-                    Debug.Log($"Row {row} cleared!");
-                }
+                    fullRows.Add(row);
             }
-        }
 
-        void CheckAndClearFullColumns()
-        {
-            if (_gridSlotMatrix.Count == 0) return;
-            int columnCount = _gridSlotMatrix[0].Count;
+            // Check full columns
+            int columnCount = _gridSlotMatrix.Count > 0 ? _gridSlotMatrix[0].Count : 0;
 
             for (int col = 0; col < columnCount; col++)
             {
                 bool isFull = true;
-
                 for (int row = 0; row < _gridSlotMatrix.Count; row++)
                 {
                     if (!_gridSlotMatrix[row][col].IsOccupied)
@@ -82,14 +81,28 @@ namespace Grid
                 }
 
                 if (isFull)
-                {
-                    for (int row = 0; row < _gridSlotMatrix.Count; row++)
-                    {
-                        _gridSlotMatrix[row][col].RemoveBlock();
-                    }
+                    fullCols.Add(col);
+            }
+        }
 
-                    Debug.Log($"Column {col} cleared!");
+        void ClearLines(List<int> fullRows, List<int> fullCols)
+        {
+            foreach (int row in fullRows)
+            {
+                for (int col = 0; col < _gridSlotMatrix[row].Count; col++)
+                {
+                    _gridSlotMatrix[row][col].RemoveBlock();
                 }
+                Debug.Log($"Cleared row: {row}");
+            }
+
+            foreach (int col in fullCols)
+            {
+                for (int row = 0; row < _gridSlotMatrix.Count; row++)
+                {
+                    _gridSlotMatrix[row][col].RemoveBlock();
+                }
+                Debug.Log($"Cleared column: {col}");
             }
         }
 

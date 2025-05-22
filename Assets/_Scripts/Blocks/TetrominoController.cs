@@ -23,6 +23,7 @@ namespace Block
 
         public Vector3 SpawnLocation { get => _spawnPosition; set => _spawnPosition = value; }
         public Vector3 SpawnSize { get => _spawnSize; set => _spawnSize = value; }
+        public int NumOfBlocks => _blockControllers.Length;
 
         private void OnEnable()
         {
@@ -64,7 +65,7 @@ namespace Block
                     _blockValidators[i].OnPlaceBlock();
                     _blockControllers[i].OnPlaceBlock();
                 }
-                EventMessenger.Default.Publish(new PlaceBlockEvent());
+                EventMessenger.Default.Publish(new PlaceBlockEvent(this));
                 _dragBlock.CanDrag = false;
             }
             else
