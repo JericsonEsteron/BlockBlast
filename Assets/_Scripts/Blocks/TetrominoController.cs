@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Linq;
 using Block;
+using DG.Tweening;
 using EventMessage;
 using UnityEngine;
 
@@ -8,48 +10,83 @@ namespace Block
 {
     public class TetrominoController : MonoBehaviour
     {
-        [SerializeField] BlockPlacementValidator[] _blockValidators;
-        [SerializeField] DragBlock _dragBlock;
+        [Header("References")]
+        [SerializeField] private BlockPlacementValidator[] _blockValidators;
+        [SerializeField] private BlockController[] _blockControllers;
+        [SerializeField] private DragBlock _dragBlock;
 
+        private Vector3 _spawnPosition;
+        private Vector3 _spawnSize;
         private bool _isValid;
         private bool _canCheck;
         private Coroutine _CheckPlacementValidation;
 
+        public Vector3 SpawnLocation { get => _spawnPosition; set => _spawnPosition = value; }
+        public Vector3 SpawnSize { get => _spawnSize; set => _spawnSize = value; }
+
         private void OnEnable()
         {
-            EventSubcription();
+            _dragBlock.OnDragEnded += OnDragEnded;
+            _dragBlock.OnDragStarted += OnDragStarted;
             _CheckPlacementValidation = StartCoroutine(CheckPlacementValidation());
             _canCheck = false;
         }
 
-        private void EventSubcription()
+        private void OnDisable()
         {
-            EventMessenger.Default.Subscribe<BlockDraggingEndedEvent>(OnDragEnded, gameObject);
+            _dragBlock.OnDragEnded -= OnDragEnded;
+            _dragBlock.OnDragStarted -= OnDragStarted;
         }
 
-        private void OnDragEnded(BlockDraggingEndedEvent @event)
+        private void OnDragEnded()
         {
-            StartCoroutine(Check());
+            StartCoroutine(CheckIfValid());
         }
 
-        private IEnumerator Check()
+        private void OnDragStarted()
+        {
+            ResizeBlock();
+        }
+
+        private void ResizeBlock()
+        {
+            transform.DOScale(new Vector3(1, 1, 1), .2f);
+        }
+
+        private IEnumerator CheckIfValid()
         {
             yield return new WaitUntil(() => _canCheck);
             if (_isValid)
             {
                 StopCoroutine(_CheckPlacementValidation);
+                for (int i = 0; i < _blockControllers.Length; i++)
+                {
+                    _blockValidators[i].OnPlaceBlock();
+                    _blockControllers[i].OnPlaceBlock();
+                }
                 EventMessenger.Default.Publish(new PlaceBlockEvent());
                 _dragBlock.CanDrag = false;
             }
+            else
+            {
+                ReturnToSpawnPosition();
+            }
+        }
+
+        private void ReturnToSpawnPosition()
+        {
+            Sequence seq = DOTween.Sequence();
+            seq.Join(transform.DOMove(_spawnPosition, .2f));
+            seq.Join(transform.DOScale(_spawnSize, .2f));
         }
 
         private IEnumerator CheckPlacementValidation()
         {
             while (true)
             {
-                foreach (var blockController in _blockValidators)
+                foreach (var blockValidator in _blockValidators)
                 {
-                    if (!blockController.IsValidToPlaceBlock)
+                    if (!blockValidator.IsValidToPlaceBlock)
                     {
                         _isValid = false;
                         break;
@@ -57,9 +94,9 @@ namespace Block
                     _isValid = true;
                 }
 
-                foreach (var blockController in _blockValidators)
+                foreach (var blockValidator in _blockValidators)
                 {
-                    blockController.SetShadowVisibility(_isValid);
+                    blockValidator.SetShadowVisibility(_isValid);
                 }
 
                 _canCheck = true;

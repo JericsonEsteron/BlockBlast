@@ -8,38 +8,37 @@ namespace Block
 {
     public class BlockPlacementValidator : MonoBehaviour
     {
+        [Header("References")]
         [SerializeField] Transform _shadowBlock;
         [SerializeField] private BoxCollider2D _collider;
         [SerializeField] private LayerMask _gridSlotLayer;
         [SerializeField] private SpriteRenderer _shadowRenderer;
 
         private bool _isValidToPlaceBlock;
-        private GridSlot _gridSlot;
         private Transform _currentSlot;
         private Coroutine _snapShadowBlock;
+        private bool _isPlacing;
 
-        public Transform ShadowBlock => _shadowBlock;
         public bool IsValidToPlaceBlock => _isValidToPlaceBlock;
-        public GridSlot GridSlot => _gridSlot;
+        public Transform CurrentSlot => _currentSlot;
 
         private void OnEnable()
         {
-            EventSubscription();
+            _isPlacing = false;
             _snapShadowBlock = StartCoroutine(SnapShadowBlock());
         }
 
-        private void EventSubscription()
+        public void OnPlaceBlock()
         {
-            EventMessenger.Default.Subscribe<PlaceBlockEvent>(OnPlaceBlock, gameObject);
+            _isPlacing = true;
         }
 
-        private void OnPlaceBlock(PlaceBlockEvent @event)
+        private void PlaceBlockLogic()
         {
             if (_snapShadowBlock == null) return;
             StopCoroutine(_snapShadowBlock);
-            _gridSlot = _currentSlot.GetComponent<GridSlot>();
-            SetShadowVisibility(false);
             _snapShadowBlock = null;
+            SetShadowVisibility(false);
         }
 
         private IEnumerator SnapShadowBlock()
@@ -69,6 +68,9 @@ namespace Block
 
                 _currentSlot = nearestSlot;
 
+                if (_isPlacing)
+                    PlaceBlockLogic();
+
                 if (nearestSlot != null)
                 {
                     _isValidToPlaceBlock = true;
@@ -80,9 +82,9 @@ namespace Block
                 }
                 else
                 {
-                    _gridSlot = null;
                     _isValidToPlaceBlock = false;
                 }
+
 
                 yield return null;
             }

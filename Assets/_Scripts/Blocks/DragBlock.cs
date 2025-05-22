@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using EventMessage;
 using UnityEngine;
 
@@ -7,14 +8,14 @@ namespace Block
     public class DragBlock : MonoBehaviour
     {
         private Camera _mainCamera;
-        private bool _isDragging = false;
-        private bool _canStartDragging = false;
         private Vector3 _dragOffset;
+        private bool _isDragging = false;
         private bool _canDrag;
-
-        public bool IsDragging => _isDragging;
-
+        
         public bool CanDrag { get => _canDrag; set => _canDrag = value; }
+
+        public Action OnDragStarted;
+        public Action OnDragEnded;
 
         private void OnEnable()
         {
@@ -54,13 +55,14 @@ namespace Block
                 {
                     _isDragging = true;
                     _dragOffset = transform.position - mouseWorld;
+                    OnDragStarted?.Invoke();
                 }
             }
 
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(0) && _isDragging)
             {
                 _isDragging = false;
-                EventMessenger.Default.Publish(new BlockDraggingEndedEvent());
+                OnDragEnded?.Invoke();
             }
         }
     }
