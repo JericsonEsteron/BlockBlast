@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8881102739306065464
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7207181969357492027}
+  - component: {fileID: 2306705744528117105}
+  m_Layer: 0
+  m_Name: TetrominoSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7207181969357492027
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8881102739306065464}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.6324008, y: -0.3421043, z: -0.025650106}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2306705744528117105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8881102739306065464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e41ea494fbbd1e141afa324038540fa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tetrominos:
+  - {fileID: 319775569464825945, guid: 4f7209a2fbc9d4049ae5fc2d8eedc72b, type: 3}
+  - {fileID: 2945787467519092093, guid: ec626e82abfca0b4e855cf684276e777, type: 3}
+  - {fileID: 2945787467519092093, guid: b6806ceaefa40704d9871373ef9bae8a, type: 3}
+  - {fileID: 2945787467519092093, guid: 84de77d17a6221149b6ade36d4af79a5, type: 3}
+  - {fileID: 2945787467519092093, guid: 3210d5ff27f0ae54e8b3f270e8da6879, type: 3}
+  - {fileID: 2945787467519092093, guid: 87c5fd29b22e94f43b36191659914555, type: 3}
+  - {fileID: 2945787467519092093, guid: 17dd8a1a534b3884281a5aece36717f0, type: 3}
+  _intialSpawnPointOffset: {x: 0, y: -3}
+  _maxNumPerSet: 3
+  _spawnDistanceBetween: {x: 1.5, y: 0}
+  _spawnSize: {x: 0.5, y: 0.5}
