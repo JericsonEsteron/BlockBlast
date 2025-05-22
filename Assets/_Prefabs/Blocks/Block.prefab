@@ -317,6 +317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _shadowBlock: {fileID: 2193733026284627949}
   _blockPlacementValidator: {fileID: 4331254214015271165}
+  _blockSpriteRenderer: {fileID: 1338473006683301100}
 --- !u!114 &4331254214015271165
 MonoBehaviour:
   m_ObjectHideFlags: 0

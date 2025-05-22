@@ -52,6 +52,8 @@ MonoBehaviour:
   - {fileID: 2945787467519092093, guid: 3210d5ff27f0ae54e8b3f270e8da6879, type: 3}
   - {fileID: 2945787467519092093, guid: 87c5fd29b22e94f43b36191659914555, type: 3}
   - {fileID: 2945787467519092093, guid: 17dd8a1a534b3884281a5aece36717f0, type: 3}
+  _tetrominoShapePresetConfig: {fileID: 11400000, guid: 688148fa7d7a6954bac1bb467cdaffe9, type: 2}
+  _tetrominoBase: {fileID: 1613024543857825166, guid: cc0639b605d370c438e92dff1e499fc2, type: 3}
   _intialSpawnPointOffset: {x: 0, y: -3}
   _maxNumPerSet: 3
   _spawnDistanceBetween: {x: 1.5, y: 0}

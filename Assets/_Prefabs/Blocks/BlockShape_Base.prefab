@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2522863070219850833}
   - component: {fileID: 8016286528187749123}
   - component: {fileID: 1613024543857825166}
+  - component: {fileID: 6206212302702498813}
   m_Layer: 0
   m_Name: BlockShape_Base
   m_TagString: Untagged
@@ -68,7 +69,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.205, y: 0.4}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -104,6 +105,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7050d32483db12d4ab21da7f9f294380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tetrominoShapePresetConfig: {fileID: 11400000, guid: 688148fa7d7a6954bac1bb467cdaffe9, type: 2}
+  _builder: {fileID: 6206212302702498813}
   _blockValidators: []
   _blockControllers: []
   _dragBlock: {fileID: 8016286528187749123}
+  _blockSpriteList: {fileID: 11400000, guid: 8797c875f0969854181dbe7023bd9523, type: 2}
+--- !u!114 &6206212302702498813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7321175736526054996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3ffac327fd9b354b9b9f04700e77618, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _blockPrefab: {fileID: 8675760994391657684, guid: 1635bd667b6026244b54445a1aefeec1, type: 3}
+  _collider: {fileID: 2522863070219850833}
+  _gridPadding: 0.01
+  _slotSize: {x: 0.4, y: 0.4}
