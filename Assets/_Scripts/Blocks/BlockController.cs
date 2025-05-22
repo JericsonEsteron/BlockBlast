@@ -9,36 +9,40 @@ namespace Block
 {
     public class BlockController : MonoBehaviour
     {
+        [Header("References")]
         [SerializeField] Transform _shadowBlock;
         [SerializeField] BlockPlacementValidator _blockPlacementValidator;
 
         private GridSlot _gridSlot;
+        private bool isInPlace;
 
         private void OnEnable()
         {
-            EventSubscription();
+            isInPlace = false;
         }
 
-        private void EventSubscription()
+        public void OnPlaceBlock()
         {
-            EventMessenger.Default.Subscribe<PlaceBlockEvent>(OnPlaceBlock, gameObject);
-        }
-
-        private void OnPlaceBlock(PlaceBlockEvent @event)
-        {
-            Invoke(nameof(PlaceBlock), .1f);
+            if (isInPlace) return;
+                Invoke(nameof(PlaceBlock), .2f);
         }
 
         private void PlaceBlock()
         {
             transform.DOMove(_shadowBlock.transform.position, .1f).SetEase(Ease.Linear);
-            _gridSlot = _blockPlacementValidator.GridSlot;
+            _gridSlot = _blockPlacementValidator.CurrentSlot.GetComponent<GridSlot>();
             _gridSlot.SetBlock(this);
+            isInPlace = true;
         }
 
         public void ClearBlock()
         {
+            transform.DOScale(Vector2.zero, .2f).OnComplete(OnScaleCompleted);
+        }
 
+        private void OnScaleCompleted()
+        {
+            Destroy(gameObject);
         }
     }
 

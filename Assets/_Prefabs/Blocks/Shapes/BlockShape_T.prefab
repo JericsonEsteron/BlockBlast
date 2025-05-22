@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: a763c11552291a74892fdb7feda86b18, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 169c68b6161b57d43b15154303df10e0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -249,7 +249,7 @@ Transform:
   m_GameObject: {fileID: 2350552590282020149}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.20500001, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.20499998, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -545,7 +545,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: a763c11552291a74892fdb7feda86b18, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 169c68b6161b57d43b15154303df10e0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -718,7 +718,7 @@ Transform:
   m_GameObject: {fileID: 4913511764348914571}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.20500001, y: -0.41, z: 0}
+  m_LocalPosition: {x: 0, y: -0.20500001, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -832,7 +832,7 @@ Transform:
   m_GameObject: {fileID: 4997106071738626611}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.20500001, y: 0.41, z: 0}
+  m_LocalPosition: {x: -0.41, y: 0.20499998, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1080,7 +1080,7 @@ Transform:
   m_GameObject: {fileID: 6226943269980885113}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.20499998, y: -0.41, z: 0}
+  m_LocalPosition: {x: 0.41, y: 0.20499998, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1242,7 +1242,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: a763c11552291a74892fdb7feda86b18, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 169c68b6161b57d43b15154303df10e0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1329,7 +1329,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: a763c11552291a74892fdb7feda86b18, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 169c68b6161b57d43b15154303df10e0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1348,10 +1348,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1613024543857825166, guid: cc0639b605d370c438e92dff1e499fc2, type: 3}
-      propertyPath: _spawnOffset.y
-      value: -0.405
-      objectReference: {fileID: 0}
     - target: {fileID: 1613024543857825166, guid: cc0639b605d370c438e92dff1e499fc2, type: 3}
       propertyPath: _blockValidators.Array.size
       value: 4
@@ -1392,6 +1388,14 @@ PrefabInstance:
       propertyPath: '_blockControllers.Array.data[3]'
       value: 
       objectReference: {fileID: 8581153660120532859}
+    - target: {fileID: 2522863070219850833, guid: cc0639b605d370c438e92dff1e499fc2, type: 3}
+      propertyPath: m_Size.x
+      value: 1.24
+      objectReference: {fileID: 0}
+    - target: {fileID: 2522863070219850833, guid: cc0639b605d370c438e92dff1e499fc2, type: 3}
+      propertyPath: m_Size.y
+      value: 0.82
+      objectReference: {fileID: 0}
     - target: {fileID: 2522863070219850833, guid: cc0639b605d370c438e92dff1e499fc2, type: 3}
       propertyPath: m_Offset.x
       value: 0
@@ -1442,7 +1446,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7321175736526054996, guid: cc0639b605d370c438e92dff1e499fc2, type: 3}
       propertyPath: m_Name
-      value: BlockShape_L
+      value: BlockShape_T
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

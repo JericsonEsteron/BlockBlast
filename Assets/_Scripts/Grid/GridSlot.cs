@@ -5,7 +5,9 @@ namespace Grid
 {
     public class GridSlot : MonoBehaviour
     {
+        [Header("References")]
         [SerializeField] BoxCollider2D _collider;
+        
         private bool _isOccupied;
         
         public bool IsOccupied => _isOccupied;
@@ -29,6 +31,7 @@ namespace Grid
         public bool RemoveBlock()
         {
             if (!_isOccupied) return false;
+            _isOccupied = false;
             Block.ClearBlock();
             _collider.enabled = true;
             Block = null;
