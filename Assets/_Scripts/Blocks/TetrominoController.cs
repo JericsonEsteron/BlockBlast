@@ -18,6 +18,7 @@ namespace Block
         [SerializeField] private DragBlock _dragBlock;
         [SerializeField] private BlockSpriteList _blockSpriteList;
         [SerializeField] private AudioClip _placeBlockClip;
+        [SerializeField] private BoxCollider2D _collider;
 
         private List<BlockPlacementValidator> _blockValidators = new();
         private List<BlockController> _blockControllers = new();
@@ -41,6 +42,7 @@ namespace Block
         {
             _dragBlock.OnDragEnded += OnDragEnded;
             _dragBlock.OnDragStarted += OnDragStarted;
+            _collider.enabled = true;
             _canCheck = false;
             transform.localEulerAngles = Vector3.zero;
             EventSubscription();
@@ -93,6 +95,7 @@ namespace Block
                 }
                 EventMessenger.Default.Publish(new PlaceBlockEvent(this));
                 AudioController.Instance.PlaySFX(_placeBlockClip);
+                _collider.enabled = false;
                 _dragBlock.CanDrag = false;
             }
             else

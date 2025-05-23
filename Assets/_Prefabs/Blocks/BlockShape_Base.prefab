@@ -112,6 +112,7 @@ MonoBehaviour:
   _dragBlock: {fileID: 8016286528187749123}
   _blockSpriteList: {fileID: 11400000, guid: 8797c875f0969854181dbe7023bd9523, type: 2}
   _placeBlockClip: {fileID: 8300000, guid: 8940604396c3b0d4798a6014521daa95, type: 3}
+  _collider: {fileID: 2522863070219850833}
 --- !u!114 &6206212302702498813
 MonoBehaviour:
   m_ObjectHideFlags: 0

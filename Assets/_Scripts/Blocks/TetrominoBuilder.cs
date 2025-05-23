@@ -5,6 +5,7 @@ using UnityEngine.Pool;
 
 public class TetrominoBuilder : MonoBehaviour
 {
+    [Header("Parameters")]
     [SerializeField] private BoxCollider2D _collider;
     [SerializeField] private float _gridPadding = 0.01f;
     [SerializeField] private Vector2 _slotSize = Vector2.one; // Same as GridSlot prefab's localScale
