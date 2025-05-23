@@ -26,6 +26,7 @@ namespace Block
         private void OnEnable()
         {
             _canDrag = true;
+            _isDragging = false;
             _inputReader.EnableInputControl();
             _inputReader.OnClicked += OnClick;
         }

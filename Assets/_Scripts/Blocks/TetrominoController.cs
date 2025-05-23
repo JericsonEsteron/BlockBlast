@@ -18,6 +18,7 @@ namespace Block
         [SerializeField] private DragBlock _dragBlock;
         [SerializeField] private BlockSpriteList _blockSpriteList;
         [SerializeField] private AudioClip _placeBlockClip;
+        [SerializeField] private BoxCollider2D _collider;
 
         private List<BlockPlacementValidator> _blockValidators = new();
         private List<BlockController> _blockControllers = new();
@@ -41,6 +42,7 @@ namespace Block
         {
             _dragBlock.OnDragEnded += OnDragEnded;
             _dragBlock.OnDragStarted += OnDragStarted;
+            _collider.enabled = true;
             _canCheck = false;
             transform.localEulerAngles = Vector3.zero;
             EventSubscription();
@@ -93,6 +95,7 @@ namespace Block
                 }
                 EventMessenger.Default.Publish(new PlaceBlockEvent(this));
                 AudioController.Instance.PlaySFX(_placeBlockClip);
+                _collider.enabled = false;
                 _dragBlock.CanDrag = false;
             }
             else
@@ -107,31 +110,6 @@ namespace Block
             seq.Join(transform.DOMove(_spawnPosition, .2f));
             seq.Join(transform.DOScale(_spawnSize, .2f));
         }
-
-        // private IEnumerator CheckPlacementValidation()
-        // {
-        //     while (true)
-        //     {
-        //         foreach (var blockValidator in _blockValidators)
-        //         {
-        //             if (!blockValidator.IsValidToPlaceBlock)
-        //             {
-        //                 _isValid = false;
-        //                 break;
-        //             }
-        //             _isValid = true;
-        //         }
-
-        //         foreach (var blockValidator in _blockValidators)
-        //         {
-        //             blockValidator.SetShadowVisibility(_isValid);
-        //         }
-
-        //         _canCheck = true;
-        //         yield return new WaitForSeconds(.1f);
-        //         _canCheck = false;
-        //     }
-        // }
         
         private IEnumerator CheckPlacementValidation()
         {
