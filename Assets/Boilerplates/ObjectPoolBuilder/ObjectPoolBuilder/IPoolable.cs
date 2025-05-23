@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-public interface IPoolable
+public interface IPoolable<T> where T : MonoBehaviour
 {
-    IObjectPool<GameObject> Pool { get; set; }
+    IObjectPool<T> Pool { get; set; }
     void ReturnToPool(float delay = 0f);
 }

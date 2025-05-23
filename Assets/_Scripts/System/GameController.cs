@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] GameObject _gameOverCanvas;
+    [SerializeField] AudioClip _gameOverClip;
 
     private void OnEnable()
     {
@@ -20,5 +22,6 @@ public class GameController : MonoBehaviour
     private void OnGameOver(GameOverEvent @event)
     {
         _gameOverCanvas.SetActive(true);
+        AudioController.Instance.PlaySFX(_gameOverClip);
     }
 }

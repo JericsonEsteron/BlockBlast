@@ -6,19 +6,21 @@ using DG.Tweening;
 using EventMessage;
 using Grid;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace Block
 {
-    public class TetrominoController : MonoBehaviour
+    public class TetrominoController : MonoBehaviour, IPoolable<TetrominoController>
     {
         [Header("References")]
         [SerializeField] private TetrominoShapePresetConfig _tetrominoShapePresetConfig;
         [SerializeField] private TetrominoBuilder _builder;
-        [SerializeField] private List<BlockPlacementValidator> _blockValidators = new();
-        [SerializeField] private List<BlockController> _blockControllers = new();
         [SerializeField] private DragBlock _dragBlock;
         [SerializeField] private BlockSpriteList _blockSpriteList;
+        [SerializeField] private AudioClip _placeBlockClip;
 
+        private List<BlockPlacementValidator> _blockValidators = new();
+        private List<BlockController> _blockControllers = new();
         private Vector3 _spawnPosition;
         private Vector3 _spawnSize;
         private bool _isValid;
@@ -33,18 +35,33 @@ namespace Block
         public TetrominoShape TetrominoShape => _tetrominoShape;
 
         public List<List<GridSlot>> GridSlotMatrix { get => _gridSlotMatrix; set => _gridSlotMatrix = value; }
+        public IObjectPool<TetrominoController> Pool { get; set; }
 
         private void OnEnable()
         {
             _dragBlock.OnDragEnded += OnDragEnded;
             _dragBlock.OnDragStarted += OnDragStarted;
             _canCheck = false;
+            transform.localEulerAngles = Vector3.zero;
+            EventSubscription();
         }
+
 
         private void OnDisable()
         {
             _dragBlock.OnDragEnded -= OnDragEnded;
             _dragBlock.OnDragStarted -= OnDragStarted;
+        }
+
+        private void EventSubscription()
+        {
+            EventMessenger.Default.Subscribe<LineClearedEvent>(OnLineCleared, gameObject);
+        }
+
+        private void OnLineCleared(LineClearedEvent @event)
+        {
+            if (transform.childCount <= 0 && gameObject.activeInHierarchy)
+                ReturnToPool();
         }
 
         private void OnDragEnded()
@@ -72,8 +89,10 @@ namespace Block
                 {
                     _blockValidators[i].OnPlaceBlock();
                     _blockControllers[i].OnPlaceBlock();
+                    _blockControllers[i].BlockSpriteController.SetLayerToInPlaceMode();
                 }
                 EventMessenger.Default.Publish(new PlaceBlockEvent(this));
+                AudioController.Instance.PlaySFX(_placeBlockClip);
                 _dragBlock.CanDrag = false;
             }
             else
@@ -160,7 +179,7 @@ namespace Block
             }
         }
 
-        public void BuildTetromino(int index, GameObject rootGameObject, Vector3 position)
+        public void BuildTetromino(int index, GameObject rootGameObject, Vector3 position, IObjectPool<BlockController> pool)
         {
             _tetrominoShape = new();
             _tetrominoShape.shape = _tetrominoShapePresetConfig.TetrominoShapes[index].shape;
@@ -168,14 +187,22 @@ namespace Block
 
             _CheckPlacementValidation = StartCoroutine(CheckPlacementValidation());
 
-            var blockControllerList = _builder.BuildTetromino(_tetrominoShape.shape, rootGameObject, position);
+            var blockControllerList = _builder.BuildTetromino(_tetrominoShape.shape, rootGameObject, position, pool);
             var spriteIndex = Random.Range(0, _blockSpriteList.BlockSprites.Length);
+            _blockControllers.Clear();
+            _blockValidators.Clear();
+            
             foreach (var blockController in blockControllerList)
             {
-                blockController.BlockSpriteRenderer.sprite = _blockSpriteList.BlockSprites[spriteIndex];
+                blockController.BlockSpriteController.SpriteRenderer.sprite = _blockSpriteList.BlockSprites[spriteIndex];
                 _blockControllers.Add(blockController);
                 _blockValidators.Add(blockController.BlockPlacementValidator);
             }
+        }
+
+        public void ReturnToPool(float delay = 0)
+        {
+            Pool.Release(this);
         }
     }
 

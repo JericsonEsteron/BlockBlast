@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using Block;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class TetrominoBuilder : MonoBehaviour
 {
-    [SerializeField] private BlockController _blockPrefab;
     [SerializeField] private BoxCollider2D _collider;
     [SerializeField] private float _gridPadding = 0.01f;
     [SerializeField] private Vector2 _slotSize = Vector2.one; // Same as GridSlot prefab's localScale
@@ -15,14 +15,17 @@ public class TetrominoBuilder : MonoBehaviour
     /// Builds a Tetromino shape centered at world position.
     /// The returned GameObject is the pivot-centered Tetromino root.
     /// </summary>
-    public List<BlockController> BuildTetromino(Vector2Int[] shape, GameObject tetrominoRoot, Vector3 worldPosition)
+    public List<BlockController> BuildTetromino(Vector2Int[] shape, GameObject tetrominoRoot, Vector3 worldPosition, IObjectPool<BlockController> pool)
     {
         // Calculate center offset
         Vector3 offset = CalculateShapeCenterOffset(shape);
+        _blockControllers.Clear();
 
         foreach (var cell in shape)
         {
-            BlockController block = Instantiate(_blockPrefab, tetrominoRoot.transform);
+            BlockController block = pool.Get();
+            block.transform.parent = tetrominoRoot.transform;
+
             Vector3 localPos = new Vector3(
                 cell.x * (_slotSize.x + _gridPadding),
                 cell.y * (_slotSize.y + _gridPadding),
@@ -63,7 +66,7 @@ public class TetrominoBuilder : MonoBehaviour
     private void FitCollider(float width, float height)
     {
         Vector2 colliderSize = new Vector2( width, height );
-        _collider.size = colliderSize;
+        _collider.size = colliderSize * 2;
         _collider.offset = Vector2.zero;
     }
 }

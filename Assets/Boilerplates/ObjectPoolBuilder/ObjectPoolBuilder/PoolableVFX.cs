@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class PoolableVFX : MonoBehaviour, IPoolable
+public class PoolableVFX : MonoBehaviour, IPoolable<PoolableVFX>
 {
     [SerializeField] float _returnToPoolDelay = 1f;
-    public IObjectPool<GameObject> Pool { get; set; }
+    public IObjectPool<PoolableVFX> Pool { get; set; }
 
 
     void OnEnable()
@@ -19,6 +19,6 @@ public class PoolableVFX : MonoBehaviour, IPoolable
 
     private void Release()
     {
-        Pool.Release(gameObject);
+        Pool.Release(this);
     }
 }

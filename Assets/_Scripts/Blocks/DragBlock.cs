@@ -7,6 +7,12 @@ namespace Block
 {
     public class DragBlock : MonoBehaviour
     {
+        [Header("References")]
+        [SerializeField] private InputReader _inputReader;
+
+        [Header("Parameter")]
+        [SerializeField] private Vector3 _dynamicDragOffset = new Vector3(0, 2.5f, 0);
+
         private Camera _mainCamera;
         private Vector3 _dragOffset;
         private bool _isDragging = false;
@@ -20,6 +26,34 @@ namespace Block
         private void OnEnable()
         {
             _canDrag = true;
+            _inputReader.EnableInputControl();
+            _inputReader.OnClicked += OnClick;
+        }
+
+        private void OnDisable()
+        {
+            _inputReader.OnClicked -= OnClick;
+        }
+
+        private void OnClick(bool isClicked)
+        {
+            if (isClicked)
+            {
+                Vector3 pointerWorldPosition = _mainCamera.ScreenToWorldPoint(_inputReader.PointerDelta);
+                pointerWorldPosition.z = 0f;
+
+                if (GetComponent<Collider2D>().OverlapPoint(pointerWorldPosition))
+                {
+                    _isDragging = true;
+                    _dragOffset = transform.position - pointerWorldPosition;
+                    OnDragStarted?.Invoke();
+                }
+            }
+            else if (!isClicked && _isDragging)
+            {
+                _isDragging = false;
+                OnDragEnded?.Invoke();
+            }
         }
 
         private void Start()
@@ -31,38 +65,14 @@ namespace Block
         {
             if (!_canDrag) return;
 
-            HandleInput();
-
             if (_isDragging)
             {
-                Vector3 mouseWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
-                mouseWorld.z = transform.position.z;
+                Vector3 pointerWorldPosition = _mainCamera.ScreenToWorldPoint(_inputReader.PointerDelta);
+                pointerWorldPosition.z = transform.position.z;
 
-                Vector3 targetPosition = mouseWorld + _dragOffset;
+                Vector3 targetPosition = pointerWorldPosition + _dragOffset;
 
-                transform.position = targetPosition;
-            }
-        }
-
-        private void HandleInput()
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Vector3 mouseWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
-                mouseWorld.z = 0f;
-
-                if (GetComponent<Collider2D>().OverlapPoint(mouseWorld))
-                {
-                    _isDragging = true;
-                    _dragOffset = transform.position - mouseWorld;
-                    OnDragStarted?.Invoke();
-                }
-            }
-
-            if (Input.GetMouseButtonUp(0) && _isDragging)
-            {
-                _isDragging = false;
-                OnDragEnded?.Invoke();
+                transform.position = targetPosition + _dynamicDragOffset;
             }
         }
     }

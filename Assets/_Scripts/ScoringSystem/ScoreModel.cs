@@ -6,7 +6,7 @@ namespace ScoringSystem
     public class ScoreModel : IModel
     {
         public Property<int> CurrentScore = new();
-        public Property<int> HighestCore = new();
+        public Property<int> HighScore = new();
     }
 
 }
