@@ -93,6 +93,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4f6db18837623245afdd3ac2294b379, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _inputReader: {fileID: 11400000, guid: 5f647eae782365d4ebb2e538ba910e62, type: 2}
+  _dynamicDragOffset: {x: 0, y: 2.5, z: 0}
 --- !u!114 &1613024543857825166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,10 +109,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tetrominoShapePresetConfig: {fileID: 11400000, guid: 688148fa7d7a6954bac1bb467cdaffe9, type: 2}
   _builder: {fileID: 6206212302702498813}
-  _blockValidators: []
-  _blockControllers: []
   _dragBlock: {fileID: 8016286528187749123}
   _blockSpriteList: {fileID: 11400000, guid: 8797c875f0969854181dbe7023bd9523, type: 2}
+  _placeBlockClip: {fileID: 8300000, guid: 8940604396c3b0d4798a6014521daa95, type: 3}
 --- !u!114 &6206212302702498813
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,7 +124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3ffac327fd9b354b9b9f04700e77618, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _blockPrefab: {fileID: 8675760994391657684, guid: 1635bd667b6026244b54445a1aefeec1, type: 3}
   _collider: {fileID: 2522863070219850833}
   _gridPadding: 0.01
   _slotSize: {x: 0.4, y: 0.4}
