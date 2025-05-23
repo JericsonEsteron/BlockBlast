@@ -30,11 +30,11 @@ namespace Grid
             return true;
         }
 
-        public bool RemoveBlock()
+        public bool RemoveBlock(int numOfLines)
         {
             if (!_isOccupied) return false;
             _isOccupied = false;
-            Block.ClearBlock();
+            Block.ClearBlock(numOfLines);
             _collider.enabled = true;
             Block = null;
             return true;

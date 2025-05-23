@@ -1,0 +1,65 @@
+{
+    "name": "PlayerInput",
+    "maps": [
+        {
+            "name": "Input",
+            "id": "24ade09c-1955-48af-ad62-dc7874101264",
+            "actions": [
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "937eea0d-28bd-4a12-bfd6-9e46810dfa46",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Delta",
+                    "type": "Value",
+                    "id": "cd061ac0-ca61-402d-88a7-3a8fe3938c46",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "6327beb3-4428-435f-8a26-55563507c8c4",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "440b565a-7fdf-45f1-8da5-d9dba8f120c6",
+                    "path": "<Touchscreen>/Press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5610b2cc-b36a-4135-b253-5ccaf5c93c22",
+                    "path": "<Pointer>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Delta",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

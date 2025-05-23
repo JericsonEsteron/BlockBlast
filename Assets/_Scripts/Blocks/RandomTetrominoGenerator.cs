@@ -6,6 +6,7 @@ using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
 using Grid;
+using UnityEngine.Pool;
 
 namespace Block
 {
@@ -14,6 +15,7 @@ namespace Block
         [Header("References")]
         [SerializeField] private TetrominoShapePresetConfig _tetrominoShapePresetConfig;
         [SerializeField] private TetrominoController _tetrominoBase;
+        [SerializeField] private BlockController _blockPrefab;
 
         [Header("Parameters")]
         [SerializeField] private Vector2 _intialSpawnPointOffset = new Vector2(0, -2.5f);
@@ -23,11 +25,17 @@ namespace Block
 
         private int _currentActiveSet;
         private List<List<GridSlot>> _gridSlotMatrix = new();
-        private int _recruveIndex;
+
+        private IObjectPool<BlockController> _blockPool;
+        private IObjectPool<TetrominoController> _tetrominoPool;
+
+        private void Awake()
+        {
+            InitializeBlockPool();
+        }
 
         private void OnEnable()
         {
-            _recruveIndex = -1;
             EventSubscription();
         }
 
@@ -35,6 +43,12 @@ namespace Block
         {
             EventMessenger.Default.Subscribe<GridGenerationCompletedEvent>(OnGridCompleted, gameObject);
             EventMessenger.Default.Subscribe<PlaceBlockEvent>(OnBlockPlaced, gameObject);
+        }
+
+        private void InitializeBlockPool()
+        {
+            _blockPool = new ObjectPoolBuilder<BlockController>(_blockPrefab).Build();
+            _tetrominoPool = new ObjectPoolBuilder<TetrominoController>(_tetrominoBase).Build();
         }
 
         private void OnBlockPlaced(PlaceBlockEvent @event)
@@ -77,9 +91,9 @@ namespace Block
 
         private TetrominoController GenerateTetromino(Vector2 spawnPosition, int index, int setIndex)
         {
-            TetrominoController instance = Instantiate(_tetrominoBase);
+            TetrominoController instance = _tetrominoPool.Get();
 
-            instance.BuildTetromino(index, instance.gameObject, spawnPosition);
+            instance.BuildTetromino(index, instance.gameObject, spawnPosition, _blockPool);
             instance.gameObject.name = _tetrominoShapePresetConfig.TetrominoShapes[index].shapeName;
 
             var newAngle = GetRandomAngle();
@@ -95,24 +109,6 @@ namespace Block
             instance.SpawnLocation = spawnPosition;
             instance.SpawnSize = _spawnSize;
             instance.GridSlotMatrix = _gridSlotMatrix;
-
-            // if (setIndex == 0)
-            // {
-            //     Debug.Log("SET INDEX IS 0");
-            //     if (_recruveIndex >= _tetrominoShapePresetConfig.TetrominoShapes.Length)
-            //     {
-            //         EventMessenger.Default.Publish(new GameOverEvent());
-            //         return null;
-            //     }
-                
-            //     if (!TetrominoCanFitController.Instance.AnyTetrominoFits(instance))
-            //     {
-            //         Debug.Log($"Recurve time {_recruveIndex}");
-            //         _recruveIndex++;
-            //         Destroy(instance);
-            //         instance = GenerateTetromino(spawnPosition, _recruveIndex, 0);
-            //     }
-            // }
 
             return instance;
         }
