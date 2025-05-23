@@ -110,31 +110,6 @@ namespace Block
             seq.Join(transform.DOMove(_spawnPosition, .2f));
             seq.Join(transform.DOScale(_spawnSize, .2f));
         }
-
-        // private IEnumerator CheckPlacementValidation()
-        // {
-        //     while (true)
-        //     {
-        //         foreach (var blockValidator in _blockValidators)
-        //         {
-        //             if (!blockValidator.IsValidToPlaceBlock)
-        //             {
-        //                 _isValid = false;
-        //                 break;
-        //             }
-        //             _isValid = true;
-        //         }
-
-        //         foreach (var blockValidator in _blockValidators)
-        //         {
-        //             blockValidator.SetShadowVisibility(_isValid);
-        //         }
-
-        //         _canCheck = true;
-        //         yield return new WaitForSeconds(.1f);
-        //         _canCheck = false;
-        //     }
-        // }
         
         private IEnumerator CheckPlacementValidation()
         {
